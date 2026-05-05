@@ -1,0 +1,134 @@
+<%- include('partials/head', { title, activePage }) %>
+<%- include('partials/nav') %>
+
+<main class="mx-auto min-w-0 max-w-2xl px-4 py-6">
+  <h1 class="text-lg font-medium text-gray-900">RSA</h1>
+  <p class="mt-1 text-sm text-gray-500">UTF-8 → Base64. Kunci PEM. Pesan pendek saja (RSA 2048-bit).</p>
+
+  <div class="mt-6 space-y-5">
+    <div>
+      <label class="text-sm text-gray-600" for="plainText">Plain text</label>
+      <textarea id="plainText" rows="3" class="mt-1 w-full border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none" placeholder="Teks"></textarea>
+    </div>
+
+    <div>
+      <button type="button" id="btnGenerateKeys" class="border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-200">Generate key pair</button>
+    </div>
+
+    <div>
+      <label class="text-sm text-gray-600" for="publicKey">Public key</label>
+      <textarea id="publicKey" rows="6" readonly class="mt-1 w-full border border-gray-200 bg-gray-50 px-2 py-2 font-mono text-xs text-gray-800"></textarea>
+    </div>
+    <div>
+      <label class="text-sm text-gray-600" for="privateKey">Private key</label>
+      <textarea id="privateKey" rows="6" readonly class="mt-1 w-full border border-gray-200 bg-gray-50 px-2 py-2 font-mono text-xs text-gray-800"></textarea>
+    </div>
+
+    <div class="flex gap-2">
+      <button type="button" id="btnEncrypt" class="border border-gray-300 bg-white px-3 py-1.5 text-sm hover:bg-gray-50">Encrypt</button>
+      <button type="button" id="btnDecrypt" class="border border-gray-300 bg-white px-3 py-1.5 text-sm hover:bg-gray-50">Decrypt</button>
+    </div>
+
+    <div>
+      <label class="text-sm text-gray-600" for="cipherText">Cipher (Base64)</label>
+      <textarea id="cipherText" rows="4" class="mt-1 w-full border border-gray-300 px-2 py-2 font-mono text-xs focus:border-gray-400 focus:outline-none"></textarea>
+    </div>
+
+    <div id="rsaMessage" class="hidden border border-gray-300 bg-gray-100 px-3 py-2 text-sm text-gray-800" role="status"></div>
+
+    <div class="min-w-0">
+      <p class="text-sm text-gray-600">Hasil encrypt</p>
+      <pre id="encryptOutput" class="mt-1 w-full max-w-full min-w-0 whitespace-pre-wrap break-all border border-gray-200 bg-gray-50 px-2 py-2 font-mono text-xs text-gray-800 min-h-[2.5rem] box-border"></pre>
+    </div>
+    <div class="min-w-0">
+      <p class="text-sm text-gray-600">Hasil decrypt</p>
+      <pre id="decryptOutput" class="mt-1 w-full max-w-full min-w-0 whitespace-pre-wrap break-all border border-gray-200 bg-gray-50 px-2 py-2 font-mono text-xs text-gray-800 min-h-[2.5rem] box-border"></pre>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  const plainText = document.getElementById('plainText');
+  const publicKey = document.getElementById('publicKey');
+  const privateKey = document.getElementById('privateKey');
+  const cipherText = document.getElementById('cipherText');
+  const encryptOutput = document.getElementById('encryptOutput');
+  const decryptOutput = document.getElementById('decryptOutput');
+  const rsaMessage = document.getElementById('rsaMessage');
+
+  function showMessage(text, isError) {
+    rsaMessage.textContent = text;
+    rsaMessage.classList.remove('hidden');
+    rsaMessage.className =
+      'border px-3 py-2 text-sm ' +
+      (isError
+        ? 'border-gray-600 bg-gray-200 text-gray-900'
+        : 'border-gray-300 bg-gray-100 text-gray-800');
+  }
+
+  function clearMessage() {
+    rsaMessage.classList.add('hidden');
+    rsaMessage.textContent = '';
+  }
+
+  async function postJson(url, body) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(function () { return {}; });
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || res.statusText || 'Gagal');
+    }
+    return data.data;
+  }
+
+  document.getElementById('btnGenerateKeys').addEventListener('click', async function () {
+    clearMessage();
+    encryptOutput.textContent = '';
+    decryptOutput.textContent = '';
+    try {
+      const data = await postJson('/api/rsa/generate-key-pair', {});
+      publicKey.value = data.publicKey;
+      privateKey.value = data.privateKey;
+      showMessage('Kunci siap.', false);
+    } catch (e) {
+      showMessage(e.message, true);
+    }
+  });
+
+  document.getElementById('btnEncrypt').addEventListener('click', async function () {
+    clearMessage();
+    encryptOutput.textContent = '';
+    try {
+      const data = await postJson('/api/rsa/encrypt', {
+        plainText: plainText.value,
+        publicKey: publicKey.value,
+      });
+      cipherText.value = data.cipherTextBase64;
+      encryptOutput.textContent = data.cipherTextBase64;
+    } catch (e) {
+      showMessage(e.message, true);
+    }
+  });
+
+  document.getElementById('btnDecrypt').addEventListener('click', async function () {
+    clearMessage();
+    decryptOutput.textContent = '';
+    try {
+      const data = await postJson('/api/rsa/decrypt', {
+        cipherTextBase64: cipherText.value,
+        privateKey: privateKey.value,
+      });
+      decryptOutput.textContent = data.plainText;
+    } catch (e) {
+      showMessage(e.message, true);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
