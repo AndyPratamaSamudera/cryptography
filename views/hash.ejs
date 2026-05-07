@@ -1,78 +1,61 @@
 <%- include('partials/head', { title, activePage }) %>
-<%- include('partials/nav') %>
+  <%- include('partials/nav') %>
 
-<main class="mx-auto min-w-0 max-w-2xl px-4 py-6">
-  <h1 class="text-lg font-medium text-gray-900">Hash</h1>
-  <div class="mt-6 space-y-5">
-    <div>
-      <label class="text-sm text-gray-600" for="hashInput">Teks</label>
-      <textarea id="hashInput" rows="4" class="mt-1 w-full border border-gray-300 px-2 py-2 text-sm focus:border-gray-400 focus:outline-none"></textarea>
-    </div>
+    <main class="main-content px-4 py-8 md:px-8 lg:px-12">
+      <div class="max-w-4xl mx-auto space-y-6">
 
-    <div class="flex flex-wrap items-end gap-3">
-      <div>
-        <label class="text-sm text-gray-600" for="algorithm">Algoritma</label>
-        <select id="algorithm" class="mt-1 block border border-gray-300 bg-white px-2 py-2 text-sm focus:border-gray-400 focus:outline-none">
-          <option value="sha256">SHA-256</option>
-          <option value="sha512">SHA-512</option>
-          <option value="md5">MD5</option>
-        </select>
+        <!-- Page header -->
+        <div class="mb-2">
+          <h2 class="text-2xl font-bold text-gray-100">Hash Generator</h2>
+          <p class="mt-1 text-sm text-gray-400">Buat hash digest dari teks menggunakan SHA-256, SHA-512, atau MD5.</p>
+        </div>
+
+        <!-- ====================== Card: Hash ====================== -->
+        <section class="glass-card p-6 fade-in">
+          <div class="flex items-center gap-3 mb-5">
+            <h3 class="text-lg font-semibold text-gray-100">Generate Hash</h3>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="field-label" for="hashInput">Input Teks</label>
+              <textarea id="hashInput" rows="4" class="input-field"
+                placeholder="Masukkan teks yang ingin di-hash..."></textarea>
+            </div>
+
+            <div class="flex flex-wrap items-end gap-3">
+              <div>
+                <label class="field-label" for="algorithm">Algoritma</label>
+                <select id="algorithm" class="select-field">
+                  <option value="sha256">SHA-256</option>
+                  <option value="sha512">SHA-512</option>
+                  <option value="md5">MD5</option>
+                </select>
+              </div>
+              <button type="button" id="btnHash" class="btn btn-primary">Generate Hash</button>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="field-label mb-0">Hasil Hash</label>
+                <button type="button" id="btnCopyHash" class="btn-icon" title="Copy Hash">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                </button>
+              </div>
+              <div id="hashOutput" class="output-area"></div>
+            </div>
+          </div>
+        </section>
+
       </div>
-      <button type="button" id="btnHash" class="border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-200">Generate</button>
-    </div>
+    </main>
 
-    <div id="hashMessage" class="hidden border px-3 py-2 text-sm" role="status"></div>
+    <script src="/js/api.js"></script>
+    <script src="/js/hash.js"></script>
+    </body>
 
-    <div class="min-w-0">
-      <p class="text-sm text-gray-600">Hash</p>
-      <pre id="hashOutput" class="mt-1 w-full max-w-full min-w-0 whitespace-pre-wrap break-all border border-gray-200 bg-gray-50 px-2 py-2 font-mono text-xs text-gray-800 min-h-[2.5rem] box-border"></pre>
-    </div>
-  </div>
-</main>
-
-<script>
-(function () {
-  const hashInput = document.getElementById('hashInput');
-  const algorithm = document.getElementById('algorithm');
-  const hashOutput = document.getElementById('hashOutput');
-  const hashMessage = document.getElementById('hashMessage');
-
-  function showMessage(text, isError) {
-    hashMessage.textContent = text;
-    hashMessage.classList.remove('hidden');
-    hashMessage.className =
-      'border px-3 py-2 text-sm ' +
-      (isError ? 'border-gray-600 bg-gray-200 text-gray-900' : 'border-gray-300 bg-gray-100 text-gray-800');
-  }
-
-  function clearMessage() {
-    hashMessage.classList.add('hidden');
-    hashMessage.textContent = '';
-  }
-
-  document.getElementById('btnHash').addEventListener('click', async function () {
-    clearMessage();
-    hashOutput.textContent = '';
-    try {
-      const res = await fetch('/api/hash', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          plainText: hashInput.value,
-          algorithm: algorithm.value,
-        }),
-      });
-      const data = await res.json().catch(function () { return {}; });
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Gagal');
-      }
-      hashOutput.textContent = data.data.hashHex;
-    } catch (e) {
-      showMessage(e.message, true);
-    }
-  });
-})();
-</script>
-
-</body>
-</html>
+    </html>
