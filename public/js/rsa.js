@@ -86,4 +86,19 @@
   btnCopyPlain.addEventListener('click', function () {
     copyToClipboard(decOutput.textContent, 'Plain Text');
   });
+
+  var btnResetAll = document.getElementById('btnResetAll');
+  if (btnResetAll) {
+    btnResetAll.addEventListener('click', function () {
+      publicKeyOut.value = '';
+      privateKeyOut.value = '';
+      encPlainText.value = '';
+      encPublicKey.value = '';
+      encOutput.textContent = '';
+      decCipherText.value = '';
+      decPrivateKey.value = '';
+      decOutput.textContent = '';
+      showToast('Semua field berhasil di-reset!', 'success');
+    });
+  }
 })();

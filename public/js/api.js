@@ -132,32 +132,3 @@ function setLoading(btn) {
   };
 }
 
-/* ============================================================
-   Sidebar toggle (mobile)
-   ============================================================ */
-
-document.addEventListener('DOMContentLoaded', function () {
-  const hamburger = document.getElementById('hamburger');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebar-overlay');
-
-  if (!hamburger || !sidebar) return;
-
-  function toggleSidebar() {
-    sidebar.classList.toggle('open');
-    if (overlay) overlay.classList.toggle('active');
-  }
-
-  hamburger.addEventListener('click', toggleSidebar);
-  if (overlay) overlay.addEventListener('click', toggleSidebar);
-
-  // Close sidebar when clicking a nav link (mobile)
-  sidebar.querySelectorAll('.nav-item').forEach(function (item) {
-    item.addEventListener('click', function () {
-      if (window.innerWidth <= 768) {
-        sidebar.classList.remove('open');
-        if (overlay) overlay.classList.remove('active');
-      }
-    });
-  });
-});

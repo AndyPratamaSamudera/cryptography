@@ -1,136 +1,151 @@
 <%- include('partials/head', { title, activePage }) %>
   <%- include('partials/nav') %>
 
-    <main class="main-content px-4 py-8 md:px-8 lg:px-12">
-      <div class="max-w-4xl mx-auto space-y-6">
+    <main class="main-content px-4 py-6 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto space-y-5">
 
         <!-- Page header -->
-        <div class="mb-2">
-          <h2 class="text-2xl font-bold text-gray-100">RSA Encryption</h2>
-          <p class="mt-1 text-sm text-gray-400">Enkripsi & dekripsi teks menggunakan RSA 2048-bit. Kunci PEM, cipher
-            Base64.</p>
+        <div class="flex items-center justify-between mb-2 gap-4">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-100">RSA Encryption</h2>
+            <p class="mt-0.5 text-xs text-gray-400">Enkripsi & dekripsi teks menggunakan RSA 2048-bit. Kunci PEM, cipher
+              Base64.</p>
+          </div>
+          <button type="button" id="btnResetAll" class="btn btn-secondary flex items-center gap-1.5 py-1.5 px-3 text-xs shrink-0" title="Reset semua field">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Reset</span>
+          </button>
         </div>
 
-        <!-- ====================== Card 1: Generate Key Pair ====================== -->
-        <section class="glass-card p-6 fade-in">
-          <div class="flex items-center justify-between mb-5">
+        <!-- ====================== Top Area: Generate Key Pair ====================== -->
+        <section class="glass-card p-4 md:p-5 fade-in">
+          <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
-              <h3 class="text-lg font-semibold text-gray-100">Generate Key Pair</h3>
+              <h3 class="text-md font-semibold text-gray-100">Generate Key Pair</h3>
             </div>
-            <button type="button" id="btnGenerateKeys" class="btn btn-primary">Generate</button>
+            <button type="button" id="btnGenerateKeys" class="btn btn-primary py-1.5 px-4 text-xs">Generate</button>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Public Key -->
             <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="field-label mb-0" for="publicKeyOut">Public Key</label>
-                <button type="button" id="btnCopyPublic" class="btn-icon" title="Copy Public Key">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              <div class="flex items-center justify-between mb-1">
+                <label class="field-label mb-0 text-xs" for="publicKeyOut">Public Key</label>
+                <button type="button" id="btnCopyPublic" class="btn-icon p-1" title="Copy Public Key">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" />
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
                 </button>
               </div>
-              <textarea id="publicKeyOut" rows="7" readonly class="input-field mono"
+              <textarea id="publicKeyOut" rows="6" readonly class="input-field mono text-[0.7rem] py-1.5 px-2.5"
                 placeholder="Klik Generate untuk membuat kunci..."></textarea>
             </div>
             <!-- Private Key -->
             <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="field-label mb-0" for="privateKeyOut">Private Key</label>
-                <button type="button" id="btnCopyPrivate" class="btn-icon" title="Copy Private Key">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              <div class="flex items-center justify-between mb-1">
+                <label class="field-label mb-0 text-xs" for="privateKeyOut">Private Key</label>
+                <button type="button" id="btnCopyPrivate" class="btn-icon p-1" title="Copy Private Key">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" />
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
                 </button>
               </div>
-              <textarea id="privateKeyOut" rows="7" readonly class="input-field mono"
+              <textarea id="privateKeyOut" rows="6" readonly class="input-field mono text-[0.7rem] py-1.5 px-2.5"
                 placeholder="Klik Generate untuk membuat kunci..."></textarea>
             </div>
           </div>
         </section>
 
-        <!-- ====================== Card 2: Encrypt ====================== -->
-        <section class="glass-card p-6 fade-in">
-          <div class="flex items-center gap-3 mb-5">
-            <h3 class="text-lg font-semibold text-gray-100">Encrypt</h3>
-          </div>
+        <!-- ====================== Bottom Area: Encrypt & Decrypt ====================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+          
+          <!-- Column 1: Encrypt -->
+          <section class="glass-card p-4 md:p-5 fade-in">
+            <div class="flex items-center gap-3 mb-3">
+              <h3 class="text-md font-semibold text-gray-100">Encrypt</h3>
+            </div>
 
-          <div class="space-y-4">
-            <div>
-              <label class="field-label" for="encPlainText">Plain Text</label>
-              <textarea id="encPlainText" rows="3" class="input-field"
-                placeholder="Masukkan teks yang ingin dienkripsi..."></textarea>
-            </div>
-            <div>
-              <label class="field-label" for="encPublicKey">Public Key (PEM)</label>
-              <textarea id="encPublicKey" rows="5" class="input-field mono"
-                placeholder="Paste public key di sini, atau generate dulu di atas..."></textarea>
-            </div>
-            <div class="flex items-center gap-3">
-              <button type="button" id="btnEncrypt" class="btn btn-primary">Encrypt</button>
-            </div>
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="field-label mb-0">Cipher Text (Base64)</label>
-                <button type="button" id="btnCopyCipher" class="btn-icon" title="Copy Cipher Text">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                  </svg>
-                </button>
+            <div class="space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="field-label text-xs mb-1" for="encPlainText">Plain Text</label>
+                  <textarea id="encPlainText" rows="3" class="input-field py-1.5 px-2.5 text-xs"
+                    placeholder="Masukkan teks yang ingin dienkripsi..."></textarea>
+                </div>
+                <div>
+                  <label class="field-label text-xs mb-1" for="encPublicKey">Public Key (PEM)</label>
+                  <textarea id="encPublicKey" rows="3" class="input-field mono text-[0.7rem] py-1.5 px-2.5"
+                    placeholder="Paste public key di sini, atau generate dulu di atas..."></textarea>
+                </div>
               </div>
-              <div id="encOutput" class="output-area"></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================== Card 3: Decrypt ====================== -->
-        <section class="glass-card p-6 fade-in">
-          <div class="flex items-center gap-3 mb-5">
-            <h3 class="text-lg font-semibold text-gray-100">Decrypt</h3>
-          </div>
-
-          <div class="space-y-4">
-            <div>
-              <label class="field-label" for="decCipherText">Cipher Text (Base64)</label>
-              <textarea id="decCipherText" rows="3" class="input-field mono"
-                placeholder="Paste cipher text dari hasil enkripsi..."></textarea>
-            </div>
-            <div>
-              <label class="field-label" for="decPrivateKey">Private Key (PEM)</label>
-              <textarea id="decPrivateKey" rows="5" class="input-field mono"
-                placeholder="Paste private key di sini, atau generate dulu di atas..."></textarea>
-            </div>
-            <div class="flex items-center gap-3">
-              <button type="button" id="btnDecrypt" class="btn btn-primary">Decrypt</button>
-            </div>
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="field-label mb-0">Hasil Dekripsi</label>
-                <button type="button" id="btnCopyPlain" class="btn-icon" title="Copy Plain Text">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                  </svg>
-                </button>
+              <div class="flex items-center justify-between">
+                <button type="button" id="btnEncrypt" class="btn btn-primary py-1.5 px-4 text-xs">Encrypt</button>
+                <div class="flex items-center gap-2">
+                  <label class="field-label mb-0 text-xs">Cipher Text (Base64)</label>
+                  <button type="button" id="btnCopyCipher" class="btn-icon p-1" title="Copy Cipher Text">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-              <div id="decOutput" class="output-area"></div>
+              <div id="encOutput" class="output-area" style="min-height: 44px; padding: 8px 10px;"></div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          <!-- Column 2: Decrypt -->
+          <section class="glass-card p-4 md:p-5 fade-in">
+            <div class="flex items-center gap-3 mb-3">
+              <h3 class="text-md font-semibold text-gray-100">Decrypt</h3>
+            </div>
+
+            <div class="space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="field-label text-xs mb-1" for="decCipherText">Cipher Text (Base64)</label>
+                  <textarea id="decCipherText" rows="3" class="input-field mono text-[0.7rem] py-1.5 px-2.5"
+                    placeholder="Paste cipher text dari hasil enkripsi..."></textarea>
+                </div>
+                <div>
+                  <label class="field-label text-xs mb-1" for="decPrivateKey">Private Key (PEM)</label>
+                  <textarea id="decPrivateKey" rows="3" class="input-field mono text-[0.7rem] py-1.5 px-2.5"
+                    placeholder="Paste private key di sini, atau generate dulu di atas..."></textarea>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <button type="button" id="btnDecrypt" class="btn btn-primary py-1.5 px-4 text-xs">Decrypt</button>
+                <div class="flex items-center gap-2">
+                  <label class="field-label mb-0 text-xs">Hasil Dekripsi</label>
+                  <button type="button" id="btnCopyPlain" class="btn-icon p-1" title="Copy Plain Text">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div id="decOutput" class="output-area" style="min-height: 44px; padding: 8px 10px;"></div>
+            </div>
+          </section>
+
+        </div>
 
       </div>
     </main>
 
     <script src="/js/api.js"></script>
     <script src="/js/rsa.js"></script>
-    </body>
+  </body>
 
-    </html>
+</html>

@@ -32,4 +32,14 @@
   btnCopyHash.addEventListener('click', function () {
     copyToClipboard(hashOutput.textContent, 'Hash');
   });
+
+  var btnResetAll = document.getElementById('btnResetAll');
+  if (btnResetAll) {
+    btnResetAll.addEventListener('click', function () {
+      hashInput.value = '';
+      algorithm.value = 'sha256';
+      hashOutput.textContent = '';
+      showToast('Semua field berhasil di-reset!', 'success');
+    });
+  }
 })();
